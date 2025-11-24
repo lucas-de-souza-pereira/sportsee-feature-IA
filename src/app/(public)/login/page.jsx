@@ -18,11 +18,11 @@ export default function LoginPage() {
     e.preventDefault()
 
     const formData = new FormData(e.currentTarget)
-    const username = formData.get('username')
-    const password = formData.get('password')
+    // const username = formData.get('username')
+    // const password = formData.get('password')
 
-    // const username = "emmaleroy"
-    // const password = "password789"
+    const username = "emmaleroy"
+    const password = "password789"
     
     try {
       const response = await fetch('/api/auth/login', {

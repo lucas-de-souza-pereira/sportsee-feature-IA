@@ -1,6 +1,11 @@
+"use client"
 
+import { useModal } from "@/context/ModalContext"
 
 export default function CtaConversation() {
+  const {openModal} = useModal()
+
+
   return (
     <div className="card flex flex-row px-13 py-6 justify-around items-center mt-26">
       <div className="flex gap-4 items-center">
@@ -12,7 +17,7 @@ export default function CtaConversation() {
     
         <p className="text-primary typo-base">Posez vos questions sur votre programme, vos performances ou vos objectifs.</p>
       </div>
-      <button className="btn btn-primary">Lancer une conversation</button>
+      <button className="btn btn-primary" onClick={() => openModal()}>Lancer une conversation</button>
     </div>
   )
 }

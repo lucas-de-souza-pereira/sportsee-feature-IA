@@ -1,8 +1,9 @@
 
+
 import Footer from "../../components/footer/Footer"
 import Navigation from "../../components/nav/Navigation"
-import UserProvider from "@/context/UserContext"
 
+import Provider from "./Provider"
 
 export default function RecipesLayout({children}) {
   return (
@@ -15,12 +16,11 @@ export default function RecipesLayout({children}) {
         <Navigation/>
       </div>
       
-      <UserProvider>
-        <main className="w-full m-auto">
+        <Provider>
+          <main className="w-full m-auto">
             {children}
-        </main>
-      </UserProvider>
-            
+          </main>
+        </Provider>
     </div>
 
     <Footer/>

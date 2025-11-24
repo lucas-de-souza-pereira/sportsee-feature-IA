@@ -85,7 +85,8 @@ export function useWeeklyStats(){
   const weeklyGoal = 2
 
   // filtres le nombre de courses par semaines
-  const runningData = userActivity ?? []
+  const runningData = Array.isArray(userActivity) ? userActivity : []
+
   const weeklyRuns = runningData.filter((run) => {
     const date = new Date(run.date)
     return date >= start && date <= end
@@ -110,10 +111,16 @@ export function useWeeklyStats(){
  * @param {string} data // mot clé exemple caloriesBurned
  * @returns {int} // somme de la valeur recherchée
  */
-function calculateTotalRunningData(runningData, data){
-    if (!runningData || runningData.length === 0) return 0
-    return Math.round(runningData.map(d => d?.[data]).reduce((a, c) => a + c))
+function calculateTotalRunningData(runningData, data) {
+  if (!Array.isArray(runningData) || runningData.length === 0) return 0
+
+  return Math.round(
+    runningData
+      .map(d => Number(d?.[data] ?? 0))
+      .reduce((a, c) => a + c, 0)
+  )
 }
+
 
 
 /**
@@ -123,7 +130,7 @@ function calculateTotalRunningData(runningData, data){
  */
 function calculateDaysOff(runningData){
 
-  if (!runningData || runningData.length === 0) return 0
+  if (!Array.isArray(runningData) || runningData.length === 0) return 0
 
   const dates = runningData.map(d => new Date(d.date)).sort((a,b) => a-b)
 
