@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+:root {
+  --background: 242, 243, 255; /* #F2F3FF bleu/gris*/
+  --foreground: 255, 255, 255; /* #FFFFFF blanc */
+
+  --color-primary : 11, 35, 244; /* #0B23F4 bleu */
+  --color-secondary: 17, 17, 17; /* #111111 noir */
+  --color-tertiary : 112, 112, 112; /* #707070 gris */
+
+  --radius-sm: 0.625rem; /* 10px */
+  --radius-md: 1.25rem;  /* 20px */
+  --radius-xl: 2.5rem;   /* 40px */
+
+
+  --text-xs:0.75rem; /* 12px */
+  --text-sm:0.875rem; /* 14px */
+  --text-base:1rem; /* 16px */
+  --text-lg:1.375rem; /* 22px */
+  --text-xl:1.75rem; /* 28px */
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  --lh-100:1;
+}
+
+@theme inline {
+  --color-primary: rgb(var(--color-primary) );
+  --color-secondary: rgb(var(--color-secondary));
+  --color-tertiary: rgb(var(--color-tertiary));
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: ##F2F3FF;
+    --foreground: #111111;
+  }
+} */
+
+@layer utilities{
+  .typo-xl      { font-size: var(--text-xl);      line-height: var(--lh-100); font-weight: var(--fw-semibold); } /* 28px */
+  .typo-lg      { font-size: var(--text-lg);      line-height: var(--lh-100); font-weight: var(--fw-medium); } /* 22px */
+
+  .typo-base { font-size: var(--text-base);       line-height: var(--lh-100); font-weight: var(--fw-medium); } /* 16px */
+  .typo-sm    { font-size: var(--text-sm);        line-height: var(--lh-100); font-weight: var(--fw-regular); } /* 14px */
+  .typo-xs { font-size: var(--text-xs);           line-height: var(--lh-100); font-weight: var(--fw-regular); } /* 12px */
+
+
+  .sr-only {
+    @apply absolute w-1 h-1 p-0 -m-1 overflow-hidden whitespace-nowrap border-0;
+  }
+}
+
+
+@layer components {
+
+  .btn {
+    @apply inline-flex items-center justify-center select-none leading-none px-10 py-4
+    
+  }
+
+  .btn-primary {
+    @apply bg-primary text-foreground cursor-pointer  ;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-base); font-weight: var(--fw-medium);
+    
+  }
+
+  .btn-primary:hover{
+    @apply transition duration-300;
+  background: color-mix(
+    in srgb,
+    rgb(var(--color-primary)) 60%,
+    rgb(var(--background)) 40%)
+  }
+
+  .card {
+    @apply rounded-sm bg-foreground
+  }
+
+}
+
+
+body {
+  background: rgb(var(--background));
+}
