@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState } from "react"
 
 import Proposal from "./components/Proposal"
-
+import Message from "./components/Message"
 
 
 export default function ChatModal( {isOpen, onClose}) {
     const [q, setQ] = useState("")
-
+    const [message, setMessage] = useState([])
+    console.log("message open",message)
     const dialogRef = useRef(null)
 
     const close = () => {
@@ -16,24 +17,33 @@ export default function ChatModal( {isOpen, onClose}) {
         onClose?.()
     }
 
+    const setNewMessage = (user, msg) => {
+        const m = { user, text:msg }
+        setMessage(prev => [...prev, m])} 
+
+        const mestest = 'Votre score de récupération indique à quel point votre corps a récupéré après vos précédents entraînements. Il prend en compte plusieurs facteurs comme :💤 La qualité de votre sommeil ❤️ Votre fréquence cardiaque au repos 🧘‍♂️ Votre niveau de stress 🏋️‍♀️ L’intensité de vos séances récentes Un score élevé (80-100) signifie que vous êtes en bonne forme pour vous entraîner à nouveau.Un score moyen (50-79) suggère de privilégier une séance plus légère ou de récupération . Un score faible (<50) indique que votre corps a besoin de repos.📊 Ce score vous aide à éviter le surentraînement et à progresser en respectant vos capacités du moment.Souhaitez-vous des conseils pour améliorer votre récupération ?'
+
     async function sendMessage() {
-        console.log("q:",q)
-        try{
-            const r = await fetch('/api/mistralAi/chatBot',{
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({message: q})
-            })
+        setNewMessage("user", q )
+        console.log("message send message",message)
+        setNewMessage("assistant", mestest)
+        console.log("message assistant message",message)
+        // try{
+        //     const r = await fetch('/api/mistralAi/chatBot',{
+        //         method: 'POST',
+        //         headers: {'Content-Type':'application/json'},
+        //         body: JSON.stringify({message: q})
+        //     })
 
-            if (!r.ok) {
-                throw new Error(`Erreur lors du chargement des données : ${res.status}`)
-            }
+        //     if (!r.ok) {
+        //         throw new Error(`Erreur lors du chargement des données : ${res.status}`)
+        //     }
 
-            const answer = await r.json()
-            console.log(answer)
-        } catch(err){
-            console.error('Erreur ChatModal :', err.message)
-        }
+        //     const answer = await r.json()
+        //     console.log(answer)
+        // } catch(err){
+        //     console.error('Erreur ChatModal :', err.message)
+        // }
         setQ("")
     }
 
@@ -103,9 +113,21 @@ export default function ChatModal( {isOpen, onClose}) {
         </svg>
     </button>
 
-    <h1 className="typo-lg text-primary text-center mt-29.5">Posez vos questions sur votre programme,<br/>
-        vos performances ou vos objectifs</h1>
+    {(message.length === 0) && (<h1 className="typo-lg text-primary text-center mt-29.5">
+        Posez vos questions sur votre programme, <br/>
+        vos performances ou vos objectifs
+        </h1>)}
     
+    {(message.length > 0) && (
+        <div className="w-[800px] mt-19.75 flex flex-col gap-10 m-auto">
+            {message.map((msg, index) => (
+                <Message key={index} {...msg}/>
+            ))}
+
+        </div>
+    )}
+
+
     <div className="absolute bottom-5.5 left-2/12 w-[800px]">
 
         <form className="relative" onSubmit={handleSubmit} >
