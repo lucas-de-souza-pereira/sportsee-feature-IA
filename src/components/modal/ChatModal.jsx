@@ -14,11 +14,22 @@ export default function ChatModal( {isOpen, onClose}) {
         onClose?.()
     }
 
-    const onSubmit = (e) => {
-        e.preventDefault()
+    const sendMessage = () => {
         console.log("q:",q)
+        setQ("")
     }
 
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        sendMessage()
+    }
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.altKey){
+            e.preventDefault()
+            sendMessage()
+        }
+    }
 
     // open/close
     useEffect(() =>{
@@ -79,11 +90,12 @@ export default function ChatModal( {isOpen, onClose}) {
     
     <div className="absolute bottom-5.5 left-2/12 w-[800px]">
 
-        <form className="relative" >
+        <form className="relative" onSubmit={handleSubmit} >
             <textarea 
             className="w-full h-[139px] border border-[#E7E7E7] rounded-lg p-4 resize-none"
             value={q}
             onChange={(e) => { setQ(e.target.value)}}
+            onKeyDown={handleKeyDown}
             />
             {!q && (
                 <div className="absolute left-4 top-4 flex flex-row items-center gap-4">
@@ -96,7 +108,7 @@ export default function ChatModal( {isOpen, onClose}) {
                 </div>
             )}
             <button
-            onClick={onSubmit}
+            type="submit"
             className="absolute bottom-4 right-6.5 bg-primary p-4 rounded-sm cursor-pointer"
             >
                 <svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -30,10 +30,16 @@ export async function POST(req) {
     }
 
     const res = NextResponse.json({ ok: true });
+
     res.cookies.set('token', data.token, {
       httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production',
       path: '/', maxAge: 24 * 60 * 60, // 24h
     });
+
+    res.cookies.set('userId', String(data.userId), {
+      httpOnly : true, sameSite: 'lax', secure : process.env.NODE_ENV === 'production', path: '/', maxAge: 24 * 60 * 60 
+    })
+
     return res;
 
   } catch (e){
