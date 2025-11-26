@@ -16,8 +16,24 @@ export default function ChatModal( {isOpen, onClose}) {
         onClose?.()
     }
 
-    const sendMessage = () => {
+    async function sendMessage() {
         console.log("q:",q)
+        try{
+            const r = await fetch('/api/mistralAi/chatBot',{
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({message: q})
+            })
+
+            if (!r.ok) {
+                throw new Error(`Erreur lors du chargement des données : ${res.status}`)
+            }
+
+            const answer = await r.json()
+            console.log(answer)
+        } catch(err){
+            console.error('Erreur ChatModal :', err.message)
+        }
         setQ("")
     }
 
