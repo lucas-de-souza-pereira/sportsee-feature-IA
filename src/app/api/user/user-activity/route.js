@@ -32,7 +32,6 @@ export async function GET(req) {
     if (r.status === 401 ) {
     const res = NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     res.cookies.set('token', '', { maxAge: 0, path: '/' })
-    res.cookies.set('userID', '', { path: '/', maxAge: 0 })
 
     return res
     }
@@ -40,7 +39,6 @@ export async function GET(req) {
     if (r.status === 403 ) {
     const res = NextResponse.json({ error: 'Forbidden (invalid token)' }, { status: 403 })
     res.cookies.set('token', '', { maxAge: 0, path: '/' })
-    res.cookies.set('userID', '', { path: '/', maxAge: 0 })
     return res
     }
 

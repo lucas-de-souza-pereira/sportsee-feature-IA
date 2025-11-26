@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react"
 
 import Proposal from "./components/Proposal"
 
+
+
 export default function ChatModal( {isOpen, onClose}) {
     const [q, setQ] = useState("")
 

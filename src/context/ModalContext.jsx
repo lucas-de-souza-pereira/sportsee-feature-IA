@@ -7,10 +7,17 @@ export const ModalContext = createContext(null)
 
 export default function ModalProvider({children}){
     const [isOpen, setIsOpen] = useState(false)
+    const [message, setMessage] = useState([])
 
     const openModal = (() => {setIsOpen(true)})
     const closeModal = (() => {setIsOpen(false)})
 
+    /**
+     * recupère le json et charge les messages
+     */
+    function setNewMessage(){
+
+    }
 
     const value = { isOpen, closeModal, openModal}
 
