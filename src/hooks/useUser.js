@@ -262,3 +262,46 @@ export function useWeeklyBpm() {
 
   return { daysBpmToCharts }
 }
+
+
+export function useDataCoach(){
+  const { age, height , weight} = useUserInfo()
+  const { weeklyRun, weeklyGoal, weeklyDistance, weeklyDuration } = useWeeklyStats()
+  const { totalDistance }  = useRunningStats()
+  const { userActivity } = useUser()  
+  
+  const safeTotalDistance = totalDistance ?? 0
+  const runningData = userActivity ?? []
+
+  let level 
+  if (safeTotalDistance > 3000) {level = "avanced"}
+  else if (safeTotalDistance > 1000) {level = "intermediate"}
+  else { level = "beginner"}
+
+  const dataUserForCoach = {
+    profile : {
+      age : age,
+      height : height,
+      weight: weight,
+      level: level
+    },
+    training: {
+      weeklyRunCount: weeklyRun,
+      weeklyGoalCount: weeklyGoal,
+      weeklyDistanceKm : Number(weeklyDistance.toFixed(1)), 
+      weeklyDurationMin : Math.round(weeklyDuration),
+      lastRuns : runningData.slice(-10).map(run =>({
+        date: run.date,
+        distanceKm : run.distance,
+        durationMin: run.duration,
+        heartRate: {
+          minBpm: run.min,
+          maxBpm: run.max,
+          avgBpm: run.average
+        },
+        caloriesBurned: run.caloriesBurned
+      }))
+    }
+  }
+  return { dataUserForCoach }
+}

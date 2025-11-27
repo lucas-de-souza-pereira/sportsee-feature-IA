@@ -1,25 +1,37 @@
-// "use client"
+
 import Image from "next/image"
+import Markdown from "react-markdown"
 
 import { useUserProfil } from "@/hooks/useUser"
 
 
-export default function Message({text,user}) {
+export default function Message({role,content, loading}) {
     const { profilePicture } = useUserProfil() 
-    console.log('text', text)
-    console.log("user",user)
-    if (!text || !user) return
 
-    if (user === "user") {
+    if (loading) {
+    return (
+      <div className="flex flex-row justify-start items-center gap-4">
+        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#F4320B]" />
+        <div className="bg-[#E7E7E7] py-2 px-4 rounded-t-md rounded-br-md text-[15px] text-secondary">
+          <span className="animate-pulse">Coach AI est en train d’écrire…</span>
+        </div>
+      </div>
+    )
+  }
+
+    if (role === "user") {
         return (
             <div className=" flex flex-row justify-end items-end gap-4">
-                <p className="bg-[#FCC1B680] py-3.5 px-5 rounded-t-md rounded-bl-md text-[15px] text-secondary">{text}</p>
+                <p className="bg-[#FCC1B680] py-3.5 px-5 rounded-t-md rounded-bl-md text-[15px] text-secondary">{content}</p>
                 <div className="relative w-8 h-8 rounded-full overflow-hidden">
                     <Image src={profilePicture} alt="icon profile" fill className="object-cover"/>
                 </div>
             </div>
         )
     }
+
+    if (!content || !role) return null
+
     return (
     <div className="flex flex-row justify-start items-end gap-4">
         <div className="flex items-center justify-center w-8 h-8 rounded-full  bg-[#F4320B]">
@@ -32,7 +44,10 @@ export default function Message({text,user}) {
         </div>
         <div className="flex flex-col gap-1">
             <span className="typo-xs text-tertiary px-2.5">Coach AI</span>
-            <p className="bg-[#E7E7E7] py-3.5 px-5 rounded-t-md rounded-br-md text-[15px] text-secondary leading-5 tracking-[-0.005em] max-w-[600px]">{text}</p>
+            <div className="bg-[#E7E7E7] py-3.5 px-5 rounded-t-md rounded-br-md text-[15px] text-secondary leading-5 tracking-[-0.005em] max-w-[600px]" >
+                <Markdown>{content}</Markdown>
+            </div>
+
         </div>
 
     </div>

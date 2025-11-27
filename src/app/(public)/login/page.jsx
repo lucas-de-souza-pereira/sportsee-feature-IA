@@ -21,8 +21,8 @@ export default function LoginPage() {
     // const username = formData.get('username')
     // const password = formData.get('password')
 
-    const username = "emmaleroy"
-    const password = "password789"
+    const username = "sophiemartin"
+    const password = "password123"
     
     try {
       const response = await fetch('/api/auth/login', {
