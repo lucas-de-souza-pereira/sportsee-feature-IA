@@ -11,6 +11,7 @@ export default function ChatModal( {isOpen, onClose}) {
     const [message, setMessage] = useState([])
     const [loading, setLoading] = useState(false)
 
+
     const { dataUserForCoach } = useDataCoach()
     const dialogRef = useRef(null)
 
@@ -29,10 +30,8 @@ export default function ChatModal( {isOpen, onClose}) {
 
         const history = [...message, userMessage].slice(-6)
         setNewMessage(userMessage)
-
-        try{
             setLoading(true)
-
+        try{
             const payload = {
                 messages : history,
                 dataUserForCoach,
