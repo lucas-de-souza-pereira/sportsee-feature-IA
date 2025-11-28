@@ -23,8 +23,12 @@ export default function ChatModal( {isOpen, onClose}) {
     const setNewMessage = (msg) => {setMessage(prev => [...prev, msg])} 
 
     async function sendMessage(customText) {
-        const text = (customText ?? q).trim()
+        let text = (customText ?? q).trim()
         if (!text) return
+
+        const MAX_IMPUT_CHARS = 500
+        if (text.length > MAX_IMPUT_CHARS) {
+            text = text.slice(0, MAX_IMPUT_CHARS)}
 
         const userMessage = { role:"user", content: text }
 
@@ -51,6 +55,10 @@ export default function ChatModal( {isOpen, onClose}) {
             setNewMessage(answer)
         } catch(err){
             console.error('Erreur ChatModal :', err.message)
+            setNewMessage({
+                role: "assistant",
+                content: "Désolé, je rencontre un problème pour répondre pour le moment. Tu peux réessayer dans quelques instants."
+                })
         }
         finally {
             setLoading(false)

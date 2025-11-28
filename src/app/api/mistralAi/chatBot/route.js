@@ -3,6 +3,42 @@ import { NextResponse } from "next/server";
 
 const apiKey = process.env.MISTRAL_API_KEY;
 
+async function callMistral(body, { retries = 2, timeoutMs = 8000 } = {}) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), timeoutMs)
+
+    try {
+      const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      })
+
+      clearTimeout(timeout)
+
+      if ([429, 500, 502, 503].includes(res.status) && attempt < retries) {
+        const delay = 500 * (attempt + 1)
+        await new Promise((r) => setTimeout(r, delay))
+        continue
+      }
+      return res
+
+          } catch (err) {
+      clearTimeout(timeout)
+
+      const isLastAttempt = attempt === retries
+      if (isLastAttempt) {
+        throw err
+      }
+      await new Promise((r) => setTimeout(r, 500 * (attempt + 1)))
+    }
+  }
+}
 
 export async function POST(req) {
     try{
@@ -49,18 +85,28 @@ export async function POST(req) {
   "stream": false
 }
 
-    const r = await fetch('https://api.mistral.ai/v1/chat/completions',{
-        method:'POST',
-        headers: {'Content-Type':'application/json',
-                "Authorization": `Bearer ${apiKey}`},
-        body: JSON.stringify(body)
-    })
+    const r = await callMistral(body)
 
     if (!r.ok){
+
+      const errorText = await r.text()
+      console.error("Erreur Mistral :", r.status, errorText)
+
+      if (r.status === 429) {
         return NextResponse.json(
-        { message: r.message }, 
-        { status: r.status })
+          { message: "L'API Mistral est temporairement saturée. Merci de réessayer dans quelques secondes." },
+          { status: 429 }
+          )
+      }
+
+  
+    return NextResponse.json(
+      { message: "Erreur lors de l'appel à Mistral.", detail: errorText },
+      { status: r.status }
+    )
     }
+
+
 
     const data = await r.json()
     const answer = {
@@ -72,9 +118,11 @@ export async function POST(req) {
 
 
     } catch (err){
-        return NextResponse.json(
-        { message: err.message }, 
-        { status: err.status })
+      console.error("Erreur serveur ou réseau :", err)
+      return NextResponse.json(
+        { message: "Erreur réseau ou serveur lors de l'appel à Mistral." },
+        { status: 500 }
+        )
     }
     
 }
