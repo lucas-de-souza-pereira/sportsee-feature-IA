@@ -8,6 +8,10 @@ export async function GET(req) {
         const cookiesStore = await cookies()
         const token = cookiesStore.get('token')?.value
 
+        if (!token) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
         const { searchParams } = new URL(req.url)
 
         const search = new URLSearchParams({
@@ -24,6 +28,20 @@ export async function GET(req) {
             headers: {Authorization : `Bearer ${token}`}
         }
     )
+ 
+    if (r.status === 401 ) {
+    const res = NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    res.cookies.set('token', '', { maxAge: 0, path: '/' })
+
+    return res
+    }
+
+    if (r.status === 403 ) {
+    const res = NextResponse.json({ error: 'Forbidden (invalid token)' }, { status: 403 })
+    res.cookies.set('token', '', { maxAge: 0, path: '/' })
+    return res
+    }
+
 
     if (!r.ok)  {return NextResponse.json(
             {message: r.message}

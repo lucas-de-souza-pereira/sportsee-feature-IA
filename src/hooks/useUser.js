@@ -85,7 +85,8 @@ export function useWeeklyStats(){
   const weeklyGoal = 2
 
   // filtres le nombre de courses par semaines
-  const runningData = userActivity ?? []
+  const runningData = Array.isArray(userActivity) ? userActivity : []
+
   const weeklyRuns = runningData.filter((run) => {
     const date = new Date(run.date)
     return date >= start && date <= end
@@ -110,10 +111,16 @@ export function useWeeklyStats(){
  * @param {string} data // mot clé exemple caloriesBurned
  * @returns {int} // somme de la valeur recherchée
  */
-function calculateTotalRunningData(runningData, data){
-    if (!runningData || runningData.length === 0) return 0
-    return Math.round(runningData.map(d => d?.[data]).reduce((a, c) => a + c))
+function calculateTotalRunningData(runningData, data) {
+  if (!Array.isArray(runningData) || runningData.length === 0) return 0
+
+  return Math.round(
+    runningData
+      .map(d => Number(d?.[data] ?? 0))
+      .reduce((a, c) => a + c, 0)
+  )
 }
+
 
 
 /**
@@ -123,7 +130,7 @@ function calculateTotalRunningData(runningData, data){
  */
 function calculateDaysOff(runningData){
 
-  if (!runningData || runningData.length === 0) return 0
+  if (!Array.isArray(runningData) || runningData.length === 0) return 0
 
   const dates = runningData.map(d => new Date(d.date)).sort((a,b) => a-b)
 
@@ -254,4 +261,47 @@ export function useWeeklyBpm() {
   }
 
   return { daysBpmToCharts }
+}
+
+
+export function useDataCoach(){
+  const { age, height , weight} = useUserInfo()
+  const { weeklyRun, weeklyGoal, weeklyDistance, weeklyDuration } = useWeeklyStats()
+  const { totalDistance }  = useRunningStats()
+  const { userActivity } = useUser()  
+  
+  const safeTotalDistance = totalDistance ?? 0
+  const runningData = userActivity ?? []
+
+  let level 
+  if (safeTotalDistance > 3000) {level = "avanced"}
+  else if (safeTotalDistance > 1000) {level = "intermediate"}
+  else { level = "beginner"}
+
+  const dataUserForCoach = {
+    profile : {
+      age : age,
+      height : height,
+      weight: weight,
+      level: level
+    },
+    training: {
+      weeklyRunCount: weeklyRun,
+      weeklyGoalCount: weeklyGoal,
+      weeklyDistanceKm : Number(weeklyDistance.toFixed(1)), 
+      weeklyDurationMin : Math.round(weeklyDuration),
+      lastRuns : runningData.slice(-10).map(run =>({
+        date: run.date,
+        distanceKm : run.distance,
+        durationMin: run.duration,
+        heartRate: {
+          minBpm: run.min,
+          maxBpm: run.max,
+          avgBpm: run.average
+        },
+        caloriesBurned: run.caloriesBurned
+      }))
+    }
+  }
+  return { dataUserForCoach }
 }

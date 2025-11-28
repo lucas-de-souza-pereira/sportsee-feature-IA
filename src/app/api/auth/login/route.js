@@ -30,10 +30,12 @@ export async function POST(req) {
     }
 
     const res = NextResponse.json({ ok: true });
+
     res.cookies.set('token', data.token, {
       httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production',
-      path: '/', maxAge: 60 * 60 * 24 * 7,
+      path: '/', maxAge: 24 * 60 * 60, // 24h
     });
+
     return res;
 
   } catch (e){
